@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>MyApp</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <% if Rails.env.development? %>
+      <%= stylesheet_link_tag "application", "data-turbo-track": "reload", media: "all" %>
+      <%= javascript_include_tag "application", defer: true, type: "module", "data-turbo-track": "reload", nonce: true %>
+    <% else %>
+      <%= stylesheet_link_tag "application" %>
+      <%= javascript_include_tag "application", defer: true, type: "module" %>
+    <% end %>
+  </head>
+  <body>
+    <div id="root"></div>
+    <%= javascript_include_tag "application", defer: true, "data-turbo-track": "reload", version: Time.current.to_i %>
+  </body>
+</html>

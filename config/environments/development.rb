@@ -78,4 +78,23 @@ Rails.application.configure do
   # Add timestamp to asset URLs
   config.assets.digest = true
   config.assets.debug = true
+
+  # Set log level to debug
+  config.log_level = :debug
+
+  # Set logger to stdout
+  config.logger = ActiveSupport::Logger.new(STDOUT)
+  config.logger.formatter = ::Logger::Formatter.new
+
+  # Enable reloading
+  config.cache_classes = false
+  
+  # Enable auto loading
+  config.eager_load = false
+  
+  # Enable reloading controllers
+  config.reload_classes_only_on_change = true
+  
+  # File watcher configuration
+  config.file_watcher = ActiveSupport::FileUpdateChecker
 end

@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import SessionPageBorderBg from "../components/SessionPageBorderBg"
+import TextBetweenLines from "../components/TextBetweenLines"
+import { signup } from "../api/auth"
 
 const Signup: React.FC = () => {
     const [email, setEmail] = useState('')
@@ -12,39 +15,25 @@ const Signup: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-
         try {
-            const response = await fetch('/users', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-Token': document.querySelector<HTMLMetaElement>('[name="csrf-token"]')?.content || ''
-                },
-                body: JSON.stringify({
-                    user: {
-                        email,
-                        password,
-                        password_confirmation: passwordConfirmation
-                    }
-                })
-            })
-
-            const data = await response.json()
-
-            if (response.ok) {
+            const data = await signup(email, password, passwordConfirmation)
+            console.log(data)
+            if (data.status === 'created') {
                 setIsAuthenticated(true)
                 navigate('/')
             } else {
+                console.log(data)
                 setErrors(data.errors)
             }
         } catch (error) {
+            console.error(error)
             setErrors(['An error occurred. Please try again.'])
         }
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full space-y-8">
+        <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-orange-500 to-yellow-500 relative">
+            <div className="max-w-md w-full space-y-8 relative z-10">
                 <div>
                     <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
                         Create your account
@@ -118,7 +107,10 @@ const Signup: React.FC = () => {
                         </button>
                     </div>
                 </form>
+                <TextBetweenLines>Or</TextBetweenLines>
+                <div className="flex justify-center"> Already have an account? <Link to="/login" className="text-indigo-600 ml-2">Log in here</Link></div>
             </div>
+            <SessionPageBorderBg />
         </div>
     )
 }

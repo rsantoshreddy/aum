@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import SessionPageBorderBg from "../components/SessionPageBorderBg"
+import TextBetweenLines from "../components/TextBetweenLines"
+import { login } from "../api/auth"
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>('')
@@ -11,36 +14,26 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
     try {
-      const response = await fetch('/sessions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-Token': document.querySelector<HTMLMetaElement>('[name="csrf-token"]')?.content || ''
-        },
-        body: JSON.stringify({ email, password })
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
+      const data = await login(email, password)
+      if (data.ok) {
         setIsAuthenticated(true)
         navigate('/')
       } else {
         setErrors(data.errors)
       }
     } catch (error) {
+      console.error(error)
       setErrors(['An error occurred. Please try again.'])
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-orange-500 to-yellow-500 relative">
+      <div className="max-w-md w-full space-y-8 relative z-10">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
+            Log in to AUM
           </h2>
         </div>
         {errors.length > 0 && (
@@ -94,11 +87,14 @@ const Login: React.FC = () => {
               type="submit"
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              Sign in
+              Log in
             </button>
           </div>
         </form>
+        <TextBetweenLines>Or</TextBetweenLines>
+        <div className="flex justify-center"> New to AUM? <Link to="/signup" className="text-indigo-600 ml-2">Sign up here</Link></div>
       </div>
+      <SessionPageBorderBg />
     </div>
   )
 }
